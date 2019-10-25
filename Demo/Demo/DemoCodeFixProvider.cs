@@ -8,13 +8,15 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
+using System;
+using System.Diagnostics;
 
 namespace Demo
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DemoCodeFixProvider)), Shared]
     public class DemoCodeFixProvider : CodeFixProvider
     {
-        private const string Title = "Remove private accessability modifier";
+        private const string Title = "Add private accessability modifier";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
@@ -44,16 +46,32 @@ namespace Demo
         async Task<Document> Fix(Document document, SyntaxToken syntax, CancellationToken cancellationToken)
         {
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxToken nextToken = syntax.GetNextToken();
-            return document.WithSyntaxRoot(root
-                .ReplaceTokens(new[] { syntax, nextToken }, (t, _) =>
-                {
-                    if (t == syntax)
-                        return SyntaxFactory.Token(SyntaxKind.None);
-                    if (t == nextToken)
-                        return nextToken.WithLeadingTrivia(syntax.LeadingTrivia.AddRange(nextToken.LeadingTrivia));
-                    return default;
-                }));
+
+            #region Old Code
+            //SyntaxToken nextToken = syntax.GetNextToken();
+            //return document.WithSyntaxRoot(root.ReplaceTokens(new[] { syntax, nextToken }, (t, _) =>
+            //    {
+            //        if (t == syntax)
+            //            return SyntaxFactory.Token(SyntaxKind.None);
+            //        if (t == nextToken)
+            //            return nextToken.WithLeadingTrivia(syntax.LeadingTrivia.AddRange(nextToken.LeadingTrivia));
+            //        return default;
+            //    })); 
+            #endregion
+            try
+            {
+
+                SyntaxToken token = SyntaxFactory.Token(DemoAnalyzer.Syntax);
+                var list = SyntaxTokenList.Create(token).ToList();
+
+
+                return document.WithSyntaxRoot(root.InsertTokensBefore(syntax, list));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return null;
         }
     }
 }

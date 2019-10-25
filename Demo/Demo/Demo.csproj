@@ -9,23 +9,29 @@
   <PropertyGroup>
     <PackageId>Demo</PackageId>
     <PackageVersion>1.0.0.0</PackageVersion>
-    <Authors>daniel.szollosi</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
+    <Authors>Dániel Szöllősi</Authors>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/D4nyi/Demo</PackageProjectUrl>
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <RepositoryUrl>https://github.com/D4nyi/Demo</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Demo</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
+    <PackageReleaseNotes>A code analyzer which can add accessability modiers what you forgoten to add.</PackageReleaseNotes>
+    <Copyright>Copyright @Dániel SZÖLLŐSI</Copyright>
     <PackageTags>Demo, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NeutralLanguage>hu-HU</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="bin\**" />
     <EmbeddedResource Remove="bin\**" />
     <None Remove="bin\**" />
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

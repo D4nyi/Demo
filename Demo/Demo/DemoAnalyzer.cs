@@ -11,6 +11,8 @@ namespace Demo
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class DemoAnalyzer : DiagnosticAnalyzer
     {
+        public static SyntaxKind Syntax = SyntaxKind.None;
+
         public const string DiagnosticId = "Demo";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
@@ -66,15 +68,23 @@ namespace Demo
             switch (context.Node)
             {
                 case TypeDeclarationSyntax node:
+                    Syntax = SyntaxKind.InternalKeyword;
+
                     HandleDefaultModifier(context, node.Modifiers, node.Identifier.GetLocation());
                     break;
                 case FieldDeclarationSyntax node:
+                    Syntax = SyntaxKind.PrivateKeyword;
+
                     HandleDefaultModifier(context, node.Modifiers, node.Declaration.GetLocation());
                     break;
                 case MethodDeclarationSyntax node:
+                    Syntax = SyntaxKind.PrivateKeyword;
+
                     HandleDefaultModifier(context, node.Modifiers, node.Identifier.GetLocation());
                     break;
                 case PropertyDeclarationSyntax node:
+                    Syntax = SyntaxKind.PrivateKeyword;
+
                     HandleDefaultModifier(context, node.Modifiers, node.Identifier.GetLocation());
                     break;
                 default:
@@ -152,7 +162,8 @@ namespace Demo
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(_rule, location));
+
+            context.ReportDiagnostic(Diagnostic.Create(_rule, location, DiagnosticSeverity.Info));
         }
 
         /// <summary>
