@@ -1,15 +1,17 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Diagnostics;
 
 namespace Demo
 {
@@ -33,8 +35,10 @@ namespace Demo
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             Diagnostic diagnostic = context.Diagnostics.First();
+
             TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
-            SyntaxToken syntax = root.FindToken(diagnosticSpan.Start);
+            SyntaxNode syntax = root.FindToken(diagnosticSpan.Start).Parent;
+            
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
@@ -43,35 +47,62 @@ namespace Demo
                 diagnostic);
         }
 
-        async Task<Document> Fix(Document document, SyntaxToken syntax, CancellationToken cancellationToken)
+        private async Task<Document> Fix(Document document, SyntaxNode syntax, CancellationToken c)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(c).ConfigureAwait(false);
+            SyntaxNode newRoot;
 
-            #region Old Code
-            //SyntaxToken nextToken = syntax.GetNextToken();
-            //return document.WithSyntaxRoot(root.ReplaceTokens(new[] { syntax, nextToken }, (t, _) =>
-            //    {
-            //        if (t == syntax)
-            //            return SyntaxFactory.Token(SyntaxKind.None);
-            //        if (t == nextToken)
-            //            return nextToken.WithLeadingTrivia(syntax.LeadingTrivia.AddRange(nextToken.LeadingTrivia));
-            //        return default;
-            //    })); 
-            #endregion
-            try
+            switch (syntax)
             {
+                case TypeDeclarationSyntax node:
+                    {
+                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
 
-                SyntaxToken token = SyntaxFactory.Token(DemoAnalyzer.Syntax);
-                var list = SyntaxTokenList.Create(token).ToList();
+                        TypeDeclarationSyntax newNode = node.WithModifiers(newList);
+                        newRoot = root.ReplaceNode(node, newNode);
+                    }
+                    break;
+                case LocalDeclarationStatementSyntax node:
+                    {
+                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
 
+                        LocalDeclarationStatementSyntax newNode = node.WithModifiers(newList);
+                        newRoot = root.ReplaceNode(node, newNode);
+                    }
+                    break;
+                case MethodDeclarationSyntax node:
+                    {
+                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
 
-                return document.WithSyntaxRoot(root.InsertTokensBefore(syntax, list));
+                        MethodDeclarationSyntax newNode = node.WithModifiers(newList);
+                        newRoot = root.ReplaceNode(node, newNode);
+                    }
+                    break;
+                case PropertyDeclarationSyntax node:
+                    {
+                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxTokenList newList =node.Modifiers.Insert(0, token);
+
+                        PropertyDeclarationSyntax newNode = node.WithModifiers(newList);
+                        newRoot = root.ReplaceNode(node, newNode);
+                    }
+                    break;
+                default:
+                    return null;
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            return null;
+
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static SyntaxToken Resolve(SyntaxToken firstToken, SyntaxKind defaultKind = SyntaxKind.PrivateKeyword)
+        {
+            SyntaxTriviaList leadingTrivia = firstToken.LeadingTrivia;
+            SyntaxToken token = SyntaxFactory.Token(leadingTrivia, defaultKind, SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
+
+            return token;
         }
     }
 }
