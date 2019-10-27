@@ -3,12 +3,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +35,12 @@ namespace Demo
 
             TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
             SyntaxNode syntax = root.FindToken(diagnosticSpan.Start).Parent;
-            
+
+            if (syntax is PredefinedTypeSyntax)
+            {
+                syntax = syntax.Parent.Parent;
+            }
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
@@ -84,9 +86,19 @@ namespace Demo
                 case PropertyDeclarationSyntax node:
                     {
                         SyntaxToken token = Resolve(node.GetFirstToken());
-                        SyntaxTokenList newList =node.Modifiers.Insert(0, token);
+                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
 
                         PropertyDeclarationSyntax newNode = node.WithModifiers(newList);
+                        newRoot = root.ReplaceNode(node, newNode);
+                    }
+                    break;
+
+                case FieldDeclarationSyntax node:
+                    {
+                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
+
+                        FieldDeclarationSyntax newNode = node.WithModifiers(newList);
                         newRoot = root.ReplaceNode(node, newNode);
                     }
                     break;

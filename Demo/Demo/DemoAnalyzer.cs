@@ -45,16 +45,6 @@ namespace Demo
                                              SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration,
                                              SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration,
                                              SyntaxKind.PropertyDeclaration, SyntaxKind.DelegateDeclaration);
-
-            #region Old Code
-            //context.RegisterSyntaxNodeAction(AnalyzeClassOrStructOrInterfaceDeclaration, SyntaxKind.ClassDeclaration,
-            //                                 SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
-
-            //context.RegisterSyntaxNodeAction(AnalyzeFieldOrEvent, SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
-            //context.RegisterSyntaxNodeAction(AnalyzeMethodOrConstructor, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration);
-            //context.RegisterSyntaxNodeAction(AnalyzeProperty, SyntaxKind.PropertyDeclaration);
-            //context.RegisterSyntaxNodeAction(AnalyzeDelegate, SyntaxKind.DelegateDeclaration); 
-            #endregion
         }
 
         /// <summary>
@@ -81,63 +71,6 @@ namespace Demo
                     break;
             }
         }
-
-        #region Old Code
-        //static void AnalyzeClassOrStructOrInterfaceDeclaration(SyntaxNodeAnalysisContext context)
-        //{
-        //    if (!(context.Node is TypeDeclarationSyntax node) ||
-        //        ConvertTokens(node.Modifiers).Except(AllowedModifiers).Any())
-        //    {
-        //        return;
-        //    }
-
-        //    HandleDefaultModifier(context, node.Identifier.GetLocation());
-        //}
-
-        //static void AnalyzeFieldOrEvent(SyntaxNodeAnalysisContext context)
-        //{
-        //    if (!(context.Node is FieldDeclarationSyntax node) ||
-        //        ConvertTokens(node.Modifiers).Except(AllowedModifiers).Any())
-        //    {
-        //        return;
-        //    }
-
-        //    HandleDefaultModifier(context, node.Declaration.GetLocation());
-        //}
-
-        //static void AnalyzeMethodOrConstructor(SyntaxNodeAnalysisContext context)
-        //{
-        //    if (!(context.Node is MethodDeclarationSyntax node) ||
-        //        ConvertTokens(node.Modifiers).Except(AllowedModifiers).Any())
-        //    {
-        //        return;
-        //    }
-
-        //    HandleDefaultModifier(context, node.Identifier.GetLocation());
-        //}
-
-        //static void AnalyzeProperty(SyntaxNodeAnalysisContext context)
-        //{
-        //    if (!(context.Node is PropertyDeclarationSyntax node) ||
-        //        ConvertTokens(node.Modifiers).Except(AllowedModifiers).Any())
-        //    {
-        //        return;
-        //    }
-
-        //    HandleDefaultModifier(context, node.Identifier.GetLocation());
-        //}
-
-        //static void AnalyzeDelegate(SyntaxNodeAnalysisContext context)
-        //{
-        //    if (!(context.Node is TypeDeclarationSyntax node) ||
-        //        ConvertTokens(node.Modifiers).Except(AllowedModifiers).Any())
-        //    {
-        //        return;
-        //    }
-
-        //    HandleDefaultModifier(context, node.Identifier.GetLocation());
-        //}
-        #endregion
 
         /// <summary>
         /// Reports a diagnostic action on the node, if it has no accessability modifier
