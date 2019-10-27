@@ -51,6 +51,11 @@ namespace Demo
 
         private async Task<Document> Fix(Document document, SyntaxNode syntax, CancellationToken c)
         {
+            if (syntax.Parent.Kind() == SyntaxKind.InterfaceDeclaration)
+            {
+                return null;
+            }
+
             SyntaxNode root = await document.GetSyntaxRootAsync(c).ConfigureAwait(false);
             SyntaxNode newRoot;
 
@@ -58,19 +63,10 @@ namespace Demo
             {
                 case TypeDeclarationSyntax node:
                     {
-                        SyntaxToken token = Resolve(node.GetFirstToken());
+                        SyntaxToken token = Resolve(node.GetFirstToken(), SyntaxKind.InternalKeyword);
                         SyntaxTokenList newList = node.Modifiers.Insert(0, token);
 
                         TypeDeclarationSyntax newNode = node.WithModifiers(newList);
-                        newRoot = root.ReplaceNode(node, newNode);
-                    }
-                    break;
-                case LocalDeclarationStatementSyntax node:
-                    {
-                        SyntaxToken token = Resolve(node.GetFirstToken());
-                        SyntaxTokenList newList = node.Modifiers.Insert(0, token);
-
-                        LocalDeclarationStatementSyntax newNode = node.WithModifiers(newList);
                         newRoot = root.ReplaceNode(node, newNode);
                     }
                     break;
@@ -92,7 +88,6 @@ namespace Demo
                         newRoot = root.ReplaceNode(node, newNode);
                     }
                     break;
-
                 case FieldDeclarationSyntax node:
                     {
                         SyntaxToken token = Resolve(node.GetFirstToken());

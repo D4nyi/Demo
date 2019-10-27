@@ -53,6 +53,11 @@ namespace Demo
         /// <param name="context"></param>
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
+            if (context.Node.Parent.Kind() == SyntaxKind.InterfaceDeclaration)
+            {
+                return;
+            }
+
             switch (context.Node)
             {
                 case TypeDeclarationSyntax node:
