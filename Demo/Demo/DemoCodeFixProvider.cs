@@ -15,8 +15,6 @@ namespace Demo
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DemoCodeFixProvider)), Shared]
     public class DemoCodeFixProvider : CodeFixProvider
     {
-        private const string Title = "Add private accessability modifier";
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get { return ImmutableArray.Create(DemoAnalyzer.DiagnosticId); }
@@ -43,9 +41,9 @@ namespace Demo
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: Title,
+                    title: Resources.AnalyzerTitle,
                     createChangedDocument: c => Fix(context.Document, syntax, c),
-                    equivalenceKey: Title),
+                    equivalenceKey: Resources.AnalyzerTitle),
                 diagnostic);
         }
 

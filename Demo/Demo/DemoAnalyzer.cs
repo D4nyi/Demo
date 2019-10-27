@@ -18,6 +18,7 @@ namespace Demo
         private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString _messageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
         private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
+
         private const string Category = "Accessability";
 
         private static readonly DiagnosticDescriptor _rule = new DiagnosticDescriptor(DiagnosticId, _title,

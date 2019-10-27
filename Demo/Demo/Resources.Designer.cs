@@ -70,7 +70,7 @@ namespace Demo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Definition contains the &apos;private&apos; accessibility modifier.
+        ///   Looks up a localized string similar to Definition does not contain &apos;private&apos; accessibility modifier.
         /// </summary>
         internal static string AnalyzerMessageFormat {
             get {
@@ -79,7 +79,7 @@ namespace Demo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove &apos;private&apos; accessibility modifier.
+        ///   Looks up a localized string similar to Add &apos;private&apos; accessibility modifier.
         /// </summary>
         internal static string AnalyzerTitle {
             get {
